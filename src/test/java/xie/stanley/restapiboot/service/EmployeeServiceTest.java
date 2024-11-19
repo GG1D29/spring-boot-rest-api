@@ -17,6 +17,8 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 
 @ExtendWith(MockitoExtension.class)
 class EmployeeServiceTest {
@@ -33,7 +35,7 @@ class EmployeeServiceTest {
     void should_AddEmployee_Successfully() {
         Mockito.when(employeeRepository.existsByEmail("john@doe.com")).thenReturn(false);
 
-        employeeService.addEmployee(createEmployeeDTO());
+        employeeService.addEmployee(getCreateEmployeeDTO());
 
         Mockito.verify(employeeRepository).save(employeeCaptor.capture());
         Employee savedEmployee = employeeCaptor.getValue();
@@ -45,10 +47,10 @@ class EmployeeServiceTest {
     @Test
     void should_Failed_AddEmployee_When_EmailAlreadyExist() {
         Mockito.when(employeeRepository.existsByEmail("john@doe.com")).thenReturn(true);
-        assertThrows(EmployeeAlreadyExistException.class, () -> employeeService.addEmployee(createEmployeeDTO()));
+        assertThrows(EmployeeAlreadyExistException.class, () -> employeeService.addEmployee(getCreateEmployeeDTO()));
     }
 
-    private EmployeeDto createEmployeeDTO() {
+    private EmployeeDto getCreateEmployeeDTO() {
         return EmployeeDtoBuilder.anEmployeeDto()
                 .withFirstName("John")
                 .withLastName("Doe")
@@ -118,7 +120,64 @@ class EmployeeServiceTest {
     }
 
     @Test
-    void updateEmployee() {
+    void should_UpdateEmployee_Successfully() {
+        Employee employee = new Employee();
+        employee.setId(5L);
+        employee.setEmail("john@doe.com");
+        employee.setFirstName("John");
+        employee.setLastName("Doe");
+        Mockito.when(employeeRepository.findByEmail("john@doe.com")).thenReturn(Optional.of(employee));
+
+        EmployeeDto payload = getUpdateEmployeeDTO();
+        employeeService.updateEmployee(payload, "john@doe.com");
+
+        Mockito.verify(employeeRepository).save(employeeCaptor.capture());
+        Employee savedEmployee = employeeCaptor.getValue();
+        assertThat(savedEmployee.getId()).isEqualTo(5L);
+        assertThat(savedEmployee.getFirstName()).isEqualTo("New John");
+        assertThat(savedEmployee.getLastName()).isEqualTo("New Doe");
+        assertThat(savedEmployee.getEmail()).isEqualTo("new_john@doe.com");
+    }
+
+    private EmployeeDto getUpdateEmployeeDTO() {
+        return EmployeeDtoBuilder.anEmployeeDto()
+                .withFirstName("New John")
+                .withLastName("New Doe")
+                .withEmail("new_john@doe.com")
+                .build();
+    }
+
+    @Test
+    void should_Failed_UpdateEmployee_When_EmployeeDoesNotExist() {
+        Mockito.when(employeeRepository.findByEmail("john@doe.com")).thenReturn(Optional.empty());
+
+        EmployeeDto payload = getUpdateEmployeeDTO();
+        assertThrows(EmployeeNotFoundException.class, () -> employeeService.updateEmployee(payload, "john@doe.com"));
+    }
+
+    @Test
+    void should_Failed_UpdateEmployee_When_Conflict_With_OtherUserEmail() {
+        Employee employee = new Employee();
+        employee.setId(5L);
+        employee.setEmail("john@doe.com");
+        employee.setFirstName("John");
+        employee.setLastName("Doe");
+        Mockito.when(employeeRepository.findByEmail("john@doe.com")).thenReturn(Optional.of(employee));
+
+        Mockito.when(employeeRepository.findByEmail("other_user_email@doe.com")).thenReturn(Optional.of(new Employee()));
+
+        EmployeeDto payload = getUpdateEmployeeConflictEmailDTO();
+        assertThrows(EmployeeAlreadyExistException.class, () -> employeeService.updateEmployee(payload, "john@doe.com"));
+
+        Mockito.verify(employeeRepository, never()).save(any(Employee.class));
+    }
+
+    private EmployeeDto getUpdateEmployeeConflictEmailDTO() {
+        return EmployeeDtoBuilder.anEmployeeDto()
+                .withFirstName("New John")
+                .withLastName("New Doe")
+                .withEmail("other_user_email@doe.com")
+                .build();
     }
 
     @Test

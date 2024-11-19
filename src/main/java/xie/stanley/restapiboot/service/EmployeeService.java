@@ -11,7 +11,7 @@ public interface EmployeeService {
 
     List<EmployeeDto> getAllEmployees();
 
-    void updateEmployee(EmployeeDto dto, int id);
+    void updateEmployee(EmployeeDto dto, String currentEmail);
 
     void deleteEmployee(int id);
 }
