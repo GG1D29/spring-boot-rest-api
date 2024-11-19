@@ -1,11 +1,11 @@
 package xie.stanley.restapiboot.dto;
 
-import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
-@Builder
-public class EmployeeDTO {
+@Setter
+public class EmployeeDto {
     private String firstName;
     private String lastName;
     private String email;

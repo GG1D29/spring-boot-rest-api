@@ -1,15 +1,15 @@
 package xie.stanley.restapiboot.service;
 
-import xie.stanley.restapiboot.dto.EmployeeDTO;
+import xie.stanley.restapiboot.dto.EmployeeDto;
 
 public interface EmployeeService {
-    void addEmployee(EmployeeDTO dto);
+    void addEmployee(EmployeeDto dto);
 
-    void getEmployee(int id);
+    EmployeeDto getEmployee(String email);
 
     void getAllEmployees();
 
-    void updateEmployee(EmployeeDTO dto, int id);
+    void updateEmployee(EmployeeDto dto, int id);
 
     void deleteEmployee(int id);
 }
