@@ -2,12 +2,14 @@ package xie.stanley.restapiboot.service;
 
 import xie.stanley.restapiboot.dto.EmployeeDto;
 
+import java.util.List;
+
 public interface EmployeeService {
     void addEmployee(EmployeeDto dto);
 
     EmployeeDto getEmployee(String email);
 
-    void getAllEmployees();
+    List<EmployeeDto> getAllEmployees();
 
     void updateEmployee(EmployeeDto dto, int id);
 

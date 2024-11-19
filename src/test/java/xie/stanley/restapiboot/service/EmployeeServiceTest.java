@@ -11,6 +11,8 @@ import xie.stanley.restapiboot.exception.EmployeeAlreadyExistException;
 import xie.stanley.restapiboot.exception.EmployeeNotFoundException;
 import xie.stanley.restapiboot.repository.EmployeeRepository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,7 +30,7 @@ class EmployeeServiceTest {
     private ArgumentCaptor<Employee> employeeCaptor;
 
     @Test
-    void should_AddEmployee_Successful() {
+    void should_AddEmployee_Successfully() {
         Mockito.when(employeeRepository.existsByEmail("john@doe.com")).thenReturn(false);
 
         employeeService.addEmployee(createEmployeeDTO());
@@ -41,7 +43,7 @@ class EmployeeServiceTest {
     }
 
     @Test
-    void should_Failed_AddEmployee_When_EmailExist() {
+    void should_Failed_AddEmployee_When_EmailAlreadyExist() {
         Mockito.when(employeeRepository.existsByEmail("john@doe.com")).thenReturn(true);
         assertThrows(EmployeeAlreadyExistException.class, () -> employeeService.addEmployee(createEmployeeDTO()));
     }
@@ -55,7 +57,7 @@ class EmployeeServiceTest {
     }
 
     @Test
-    void should_ReturnEmployeeByEmail_Successful() {
+    void should_ReturnEmployeeByEmail_Successfully() {
         Employee employee = new Employee();
         employee.setEmail("john@doe.com");
         employee.setFirstName("John");
@@ -75,7 +77,44 @@ class EmployeeServiceTest {
     }
 
     @Test
-    void getAllEmployees() {
+    void should_GetAllEmployees_Successfully() {
+        Mockito.when(employeeRepository.findAll()).thenReturn(getAllEmployees());
+
+        List<EmployeeDto> actual = employeeService.getAllEmployees();
+        assertThat(actual).hasSize(2);
+        assertThat(actual.get(0).getFirstName()).isEqualTo("John");
+        assertThat(actual.get(0).getLastName()).isEqualTo("Doe");
+        assertThat(actual.get(0).getEmail()).isEqualTo("john@doe.com");
+
+        assertThat(actual.get(1).getFirstName()).isEqualTo("Budi");
+        assertThat(actual.get(1).getLastName()).isEqualTo("Andi");
+        assertThat(actual.get(1).getEmail()).isEqualTo("budi@doe.com");
+    }
+
+    @Test
+    void should_GetEmptyEmployeeList_When_NoData() {
+        Mockito.when(employeeRepository.findAll()).thenReturn(new ArrayList<>());
+
+        List<EmployeeDto> actual = employeeService.getAllEmployees();
+        assertThat(actual).isEmpty();
+    }
+
+    private List<Employee> getAllEmployees() {
+        List<Employee> employees = new ArrayList<>();
+        Employee e1 = new Employee();
+        e1.setFirstName("John");
+        e1.setLastName("Doe");
+        e1.setEmail("john@doe.com");
+
+        Employee e2 = new Employee();
+        e2.setFirstName("Budi");
+        e2.setLastName("Andi");
+        e2.setEmail("budi@doe.com");
+
+        employees.add(e1);
+        employees.add(e2);
+
+        return employees;
     }
 
     @Test

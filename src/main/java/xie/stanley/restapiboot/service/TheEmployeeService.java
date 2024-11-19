@@ -9,6 +9,8 @@ import xie.stanley.restapiboot.exception.EmployeeAlreadyExistException;
 import xie.stanley.restapiboot.exception.EmployeeNotFoundException;
 import xie.stanley.restapiboot.repository.EmployeeRepository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -42,8 +44,17 @@ public class TheEmployeeService implements EmployeeService {
     }
 
     @Override
-    public void getAllEmployees() {
+    public List<EmployeeDto> getAllEmployees() {
+        List<Employee> employees = employeeRepository.findAll();
+        List<EmployeeDto> employeeDto = new ArrayList<>();
 
+        for (Employee employee : employees) {
+            EmployeeDto dto = new EmployeeDto();
+            BeanUtils.copyProperties(employee, dto);
+            employeeDto.add(dto);
+        }
+
+        return employeeDto;
     }
 
     @Override
