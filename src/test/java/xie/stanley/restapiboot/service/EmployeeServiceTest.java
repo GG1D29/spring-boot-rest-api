@@ -48,6 +48,8 @@ class EmployeeServiceTest {
     void should_Failed_AddEmployee_When_EmailAlreadyExist() {
         Mockito.when(employeeRepository.existsByEmail("john@doe.com")).thenReturn(true);
         assertThrows(EmployeeAlreadyExistException.class, () -> employeeService.addEmployee(getCreateEmployeeDTO()));
+
+        Mockito.verify(employeeRepository, never()).save(any(Employee.class));
     }
 
     private EmployeeDto getCreateEmployeeDTO() {
@@ -153,6 +155,8 @@ class EmployeeServiceTest {
 
         EmployeeDto payload = getUpdateEmployeeDTO();
         assertThrows(EmployeeNotFoundException.class, () -> employeeService.updateEmployee(payload, "john@doe.com"));
+
+        Mockito.verify(employeeRepository, never()).save(any(Employee.class));
     }
 
     @Test
@@ -181,6 +185,18 @@ class EmployeeServiceTest {
     }
 
     @Test
-    void deleteEmployee() {
+    void should_DeleteEmployee_Successfully() {
+        Mockito.when(employeeRepository.existsByEmail("john@doe.com")).thenReturn(true);
+        employeeService.deleteEmployee("john@doe.com");
+
+        Mockito.verify(employeeRepository).deleteByEmail("john@doe.com");
+    }
+
+    @Test
+    void should_Failed_DeleteEmployee_When_EmployeeDoesNotExist() {
+        Mockito.when(employeeRepository.existsByEmail("john@doe.com")).thenReturn(false);
+        assertThrows(EmployeeNotFoundException.class, () -> employeeService.deleteEmployee("john@doe.com"));
+
+        Mockito.verify(employeeRepository, never()).deleteByEmail(any(String.class));
     }
 }

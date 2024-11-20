@@ -76,7 +76,12 @@ public class TheEmployeeService implements EmployeeService {
     }
 
     @Override
-    public void deleteEmployee(int id) {
+    public void deleteEmployee(String email) {
+        boolean isExist = employeeRepository.existsByEmail(email);
+        if (!isExist) {
+            throw new EmployeeNotFoundException(email);
+        }
 
+        employeeRepository.deleteByEmail(email);
     }
 }
