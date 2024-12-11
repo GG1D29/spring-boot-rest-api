@@ -1,0 +1,1 @@
+This is a project to demonstrate simple REST API with Spring Boot. 
