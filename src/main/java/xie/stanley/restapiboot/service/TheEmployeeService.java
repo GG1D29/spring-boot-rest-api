@@ -60,20 +60,27 @@ public class TheEmployeeService implements EmployeeService {
 
     @Override
     public void updateEmployee(EmployeeDto dto, String currentEmail) {
-        Optional<Employee> currentEmployee = employeeRepository.findByEmail(currentEmail); // The identifier.
-        if (currentEmployee.isEmpty()) {
-            throw new EmployeeNotFoundException(currentEmail);
+        Employee employee = getCurrentEmployee(currentEmail);
+        validateNewEmail(employee, dto);
+
+        BeanUtils.copyProperties(dto, employee);
+        employeeRepository.save(employee);
+    }
+
+    private Employee getCurrentEmployee(String currentEmail) {
+        Optional<Employee> currentEmployee = employeeRepository.findByEmail(currentEmail);
+        return currentEmployee.orElseThrow(() -> new EmployeeNotFoundException(currentEmail));
+    }
+
+    private void validateNewEmail(Employee employee, EmployeeDto dto) {
+        if (employee.getEmail().equals(dto.getEmail())) {
+            return;
         }
 
-        Optional<Employee> otherEmployee = employeeRepository.findByEmail(dto.getEmail()); // The new email value.
+        Optional<Employee> otherEmployee = employeeRepository.findByEmail(dto.getEmail());
         if (otherEmployee.isPresent()) {
             throw new EmployeeAlreadyExistException(dto.getEmail());
         }
-
-        Employee employee = currentEmployee.get();
-        BeanUtils.copyProperties(dto, employee);
-
-        employeeRepository.save(employee);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package xie.stanley.restapiboot.controller;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> addEmployee(@RequestBody EmployeeDto employee) {
+    public ResponseEntity<Void> addEmployee(@RequestBody @Valid EmployeeDto employee) {
         employeeService.addEmployee(employee);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();

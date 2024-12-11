@@ -141,6 +141,27 @@ class EmployeeServiceTest {
         assertThat(savedEmployee.getEmail()).isEqualTo("new_john@doe.com");
     }
 
+    @Test
+    void should_UpdateEmployee_Successfully_When_NoChangeToEmail() {
+        Employee employee = new Employee();
+        employee.setId(5L);
+        employee.setEmail("john@doe.com");
+        employee.setFirstName("John");
+        employee.setLastName("Doe");
+        Mockito.when(employeeRepository.findByEmail("john@doe.com")).thenReturn(Optional.of(employee));
+
+        EmployeeDto payload = getUpdateEmployeeDTO();
+        payload.setEmail("john@doe.com"); // Same email means not changing the email.
+        employeeService.updateEmployee(payload, "john@doe.com");
+
+        Mockito.verify(employeeRepository).save(employeeCaptor.capture());
+        Employee savedEmployee = employeeCaptor.getValue();
+        assertThat(savedEmployee.getId()).isEqualTo(5L);
+        assertThat(savedEmployee.getFirstName()).isEqualTo("New John");
+        assertThat(savedEmployee.getLastName()).isEqualTo("New Doe");
+        assertThat(savedEmployee.getEmail()).isEqualTo("john@doe.com");
+    }
+
     private EmployeeDto getUpdateEmployeeDTO() {
         return EmployeeDtoBuilder.anEmployeeDto()
                 .withFirstName("New John")
