@@ -1,5 +1,6 @@
 package xie.stanley.restapiboot.service;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -76,6 +77,7 @@ public class TheEmployeeService implements EmployeeService {
     }
 
     @Override
+    @Transactional
     public void deleteEmployee(String email) {
         boolean isExist = employeeRepository.existsByEmail(email);
         if (!isExist) {

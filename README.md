@@ -1,1 +1,7 @@
-This is a project to demonstrate simple REST API with Spring Boot. 
+This is simple REST API java project.
+
+Tech stack:
+- Spring Boot
+- H2 in-memory database
+- Lombok
+
