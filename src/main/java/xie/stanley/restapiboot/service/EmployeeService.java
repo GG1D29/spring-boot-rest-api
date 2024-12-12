@@ -13,7 +13,7 @@ public interface EmployeeService {
 
     List<EmployeeDto> getAllEmployees();
 
-    void updateEmployee(EmployeeDto dto, String currentEmail);
+    void updateEmployee(EmployeeDto dto, String currentEmail) throws EmployeeNotFoundException, EmployeeAlreadyExistException;
 
-    void deleteEmployee(String email);
+    void deleteEmployee(String email) throws EmployeeNotFoundException;
 }

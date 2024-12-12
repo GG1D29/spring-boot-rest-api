@@ -20,10 +20,10 @@ import java.util.List;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -103,8 +103,7 @@ class EmployeeControllerTest {
 
     @Test
     void should_Failed_GetEmployee_When_EmailIdNotFound() throws Exception {
-        when(employeeService.getEmployee("some-email"))
-                .thenThrow(new EmployeeNotFoundException("some-email"));
+        when(employeeService.getEmployee("some-email")).thenThrow(new EmployeeNotFoundException("some-email"));
 
         mockMvc.perform(get("/employees/some-email"))
                 .andDo(print())
@@ -138,18 +137,59 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void should_UpdateEmployee_Successfully() {
+    void should_UpdateEmployee_Successfully() throws Exception {
+        EmployeeDto employee = getAnEmployee();
+        String payload = objectMapper.writeValueAsString(employee);
+
+        mockMvc.perform(put("/employees/some-email")
+                        .contentType(MediaType.APPLICATION_JSON).content(payload))
+                .andExpect(status().isNoContent());
     }
 
     @Test
-    void should_Failed_UpdateEmployee_When_OtherEmailIdAlreadyExists() {
+    void should_Failed_UpdateEmployee_When_EmailIdNotFound() throws Exception {
+        doThrow(new EmployeeNotFoundException("some-email"))
+                .when(employeeService).updateEmployee(any(EmployeeDto.class), anyString());
+
+        EmployeeDto employee = getAnEmployee();
+        String payload = objectMapper.writeValueAsString(employee);
+
+        mockMvc.perform(put("/employees/some-email")
+                        .contentType(MediaType.APPLICATION_JSON).content(payload))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message", is("Employee not found: some-email")));
     }
 
     @Test
-    void should_DeleteEmployee_Successfully() {
+    void should_Failed_UpdateEmployee_When_OtherEmailIdAlreadyExists() throws Exception {
+        doThrow(new EmployeeAlreadyExistException("some-email"))
+                .when(employeeService).updateEmployee(any(EmployeeDto.class), anyString());
+
+        EmployeeDto employee = getAnEmployee();
+        String payload = objectMapper.writeValueAsString(employee);
+
+        mockMvc.perform(put("/employees/some-email")
+                        .contentType(MediaType.APPLICATION_JSON).content(payload))
+                .andDo(print())
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message", is("Employee already exists with this email: some-email")));
     }
 
     @Test
-    void should_Failed_DeleteEmployee_When_EmailIdNotFound() {
+    void should_DeleteEmployee_Successfully() throws Exception {
+
+        mockMvc.perform(delete("/employees/some-email"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void should_Failed_DeleteEmployee_When_EmailIdNotFound() throws Exception {
+        doThrow(new EmployeeNotFoundException("some-email")).when(employeeService).deleteEmployee("some-email");
+
+        mockMvc.perform(delete("/employees/some-email"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message", is("Employee not found: some-email")));
     }
 }

@@ -59,7 +59,9 @@ public class TheEmployeeService implements EmployeeService {
     }
 
     @Override
-    public void updateEmployee(EmployeeDto dto, String currentEmail) {
+    public void updateEmployee(EmployeeDto dto, String currentEmail) throws EmployeeNotFoundException,
+            EmployeeAlreadyExistException {
+
         Employee employee = getCurrentEmployee(currentEmail);
         validateNewEmail(employee, dto);
 
@@ -85,7 +87,7 @@ public class TheEmployeeService implements EmployeeService {
 
     @Override
     @Transactional
-    public void deleteEmployee(String email) {
+    public void deleteEmployee(String email) throws EmployeeNotFoundException {
         boolean isExist = employeeRepository.existsByEmail(email);
         if (!isExist) {
             throw new EmployeeNotFoundException(email);
