@@ -20,7 +20,7 @@ public class TheEmployeeService implements EmployeeService {
     private final EmployeeRepository employeeRepository;
 
     @Override
-    public void addEmployee(EmployeeDto dto) {
+    public void addEmployee(EmployeeDto dto) throws EmployeeAlreadyExistException {
         boolean isExist = employeeRepository.existsByEmail(dto.getEmail());
         if (isExist) {
             throw new EmployeeAlreadyExistException(dto.getEmail());
@@ -33,7 +33,7 @@ public class TheEmployeeService implements EmployeeService {
     }
 
     @Override
-    public EmployeeDto getEmployee(String email) {
+    public EmployeeDto getEmployee(String email) throws EmployeeNotFoundException {
         Optional<Employee> employee = employeeRepository.findByEmail(email);
         if (employee.isEmpty()) {
             throw new EmployeeNotFoundException(email);
