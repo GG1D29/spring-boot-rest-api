@@ -25,10 +25,8 @@ public class TheUserService implements UserService {
 
     @Override
     public void addUser(UserDto dto) {
-        User user = userMapper.toModel(dto);
-
-        //        User user = new User();
-//        BeanUtils.copyProperties(dto, user);
+        User user = new User();
+        BeanUtils.copyProperties(dto, user);
 
         userRepository.save(user);
     }

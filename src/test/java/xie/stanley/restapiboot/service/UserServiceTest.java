@@ -10,7 +10,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import xie.stanley.restapiboot.dto.UserDto;
 import xie.stanley.restapiboot.exception.UserNotFoundException;
 import xie.stanley.restapiboot.mapper.UserMapper;
-import xie.stanley.restapiboot.model.Employee;
 import xie.stanley.restapiboot.model.User;
 import xie.stanley.restapiboot.model.UserType;
 import xie.stanley.restapiboot.repository.UserRepository;
@@ -21,7 +20,8 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -51,18 +51,21 @@ class UserServiceTest {
 
     @Test
     void should_AddUser_Successfully() {
-        User user = new User();
-        user.setAddress("jalan jalan");
-        user.setName("naamaku");
 
-        when(userMapper.toModel(any(UserDto.class))).thenReturn(user);
-
-        service.addUser(new UserDto());
+        service.addUser(getAddUserDto());
 
         verify(userRepository).save(userArgumentCaptor.capture());
         User capturedUser = userArgumentCaptor.getValue();
         assertThat(capturedUser.getAddress()).isEqualTo("jalan jalan");
         assertThat(capturedUser.getName()).isEqualTo("naamaku");
+    }
+
+    private UserDto getAddUserDto() {
+        UserDto dto = new UserDto();
+        dto.setAddress("jalan jalan");
+        dto.setName("naamaku");
+
+        return dto;
     }
 
     @Test
