@@ -2,8 +2,6 @@ package xie.stanley.restapiboot.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,7 +19,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,9 +32,6 @@ class UserServiceTest {
 
     @Mock
     private UserMapper userMapper;
-
-    @Captor
-    private ArgumentCaptor<User> userArgumentCaptor;
 
     @Test
     void should_FindAllUser_Successfully() {
@@ -52,21 +47,15 @@ class UserServiceTest {
 
     @Test
     void should_AddUser_Successfully() {
+        User user = new User();
+        when(userMapper.toModel(any(UserDto.class))).thenReturn(user);
 
-        service.addUser(getAddUserDto());
+        User savedUser = new User();
+        savedUser.setId(100);
+        when(userRepository.save(user)).thenReturn(savedUser);
 
-        verify(userRepository).save(userArgumentCaptor.capture());
-        User capturedUser = userArgumentCaptor.getValue();
-        assertThat(capturedUser.getAddress()).isEqualTo("jalan jalan");
-        assertThat(capturedUser.getName()).isEqualTo("naamaku");
-    }
-
-    private UserDto getAddUserDto() {
-        UserDto dto = new UserDto();
-        dto.setAddress("jalan jalan");
-        dto.setName("naamaku");
-
-        return dto;
+        int actual = service.addUser(new UserDto());
+        assertThat(actual).isEqualTo(100);
     }
 
     @Test

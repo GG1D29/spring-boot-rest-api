@@ -7,7 +7,7 @@ import java.util.List;
 public interface UserService {
     List<UserDto> findAllUser();
 
-    void addUser(UserDto dto);
+    int addUser(UserDto dto);
 
     UserDto findUser(int id);
 }
