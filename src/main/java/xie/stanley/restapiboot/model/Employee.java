@@ -1,4 +1,4 @@
-package xie.stanley.restapiboot.entity;
+package xie.stanley.restapiboot.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;

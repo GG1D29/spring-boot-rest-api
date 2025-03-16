@@ -6,7 +6,7 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import xie.stanley.restapiboot.dto.EmployeeDto;
 import xie.stanley.restapiboot.dto.EmployeeDtoBuilder;
-import xie.stanley.restapiboot.entity.Employee;
+import xie.stanley.restapiboot.model.Employee;
 import xie.stanley.restapiboot.exception.EmployeeAlreadyExistException;
 import xie.stanley.restapiboot.exception.EmployeeNotFoundException;
 import xie.stanley.restapiboot.repository.EmployeeRepository;

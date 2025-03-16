@@ -1,7 +1,7 @@
 package xie.stanley.restapiboot.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import xie.stanley.restapiboot.entity.Employee;
+import xie.stanley.restapiboot.model.Employee;
 
 import java.util.Optional;
 

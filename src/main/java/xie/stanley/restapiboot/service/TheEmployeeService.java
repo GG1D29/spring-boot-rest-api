@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import xie.stanley.restapiboot.dto.EmployeeDto;
-import xie.stanley.restapiboot.entity.Employee;
+import xie.stanley.restapiboot.model.Employee;
 import xie.stanley.restapiboot.exception.EmployeeAlreadyExistException;
 import xie.stanley.restapiboot.exception.EmployeeNotFoundException;
 import xie.stanley.restapiboot.repository.EmployeeRepository;
