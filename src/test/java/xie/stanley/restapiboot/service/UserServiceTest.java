@@ -44,7 +44,7 @@ class UserServiceTest {
         when(userRepository.findAll()).thenReturn(users);
 
         List<UserDto> UserDto = new ArrayList<>();
-        when(userMapper.toDTO(users)).thenReturn(UserDto);
+        when(userMapper.toDto(users)).thenReturn(UserDto);
 
         List<UserDto> actual = service.findAllUser();
         assertThat(actual).isEqualTo(UserDto);
@@ -77,7 +77,7 @@ class UserServiceTest {
         when(userRepository.findById(1)).thenReturn(Optional.of(user));
 
         UserDto expected = getUserDto();
-        when(userMapper.toDTO(user)).thenReturn(expected);
+        when(userMapper.toDto(user)).thenReturn(expected);
 
         UserDto actual = service.findUser(1);
         assertThat(actual).isEqualTo(expected);

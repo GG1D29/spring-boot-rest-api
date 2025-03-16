@@ -20,7 +20,7 @@ public class TheUserService implements UserService {
     @Override
     public List<UserDto> findAllUser() {
         List<User> users = userRepository.findAll();
-        return userMapper.toDTO(users);
+        return userMapper.toDto(users);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class TheUserService implements UserService {
     @Override
     public UserDto findUser(int id) {
         return userRepository.findById(id)
-                .map(userMapper::toDTO)
+                .map(userMapper::toDto)
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
 }
