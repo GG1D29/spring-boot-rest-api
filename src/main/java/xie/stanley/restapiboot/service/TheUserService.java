@@ -32,7 +32,9 @@ public class TheUserService implements UserService {
     }
 
     @Override
-    public User findUser(int id) {
-        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+    public UserDto findUser(int id) {
+        return userRepository.findById(id)
+                .map(userMapper::toDTO)
+                .orElseThrow(() -> new UserNotFoundException(id));
     }
 }

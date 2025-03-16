@@ -14,6 +14,7 @@ import xie.stanley.restapiboot.model.User;
 import xie.stanley.restapiboot.model.UserType;
 import xie.stanley.restapiboot.repository.UserRepository;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -75,8 +76,21 @@ class UserServiceTest {
 
         when(userRepository.findById(1)).thenReturn(Optional.of(user));
 
-        User actual = service.findUser(1);
-        assertThat(actual.getUserType()).isEqualTo(UserType.LENDER);
+        UserDto expected = getUserDto();
+        when(userMapper.toDTO(user)).thenReturn(expected);
+
+        UserDto actual = service.findUser(1);
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    private UserDto getUserDto() {
+        UserDto user = new UserDto();
+        user.setUserType(UserType.LENDER);
+        user.setName("shenli");
+        user.setBirthDate(LocalDate.of(1990, 1, 2));
+        user.setAddress("jalan jalan");
+
+        return user;
     }
 
     @Test
