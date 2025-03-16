@@ -1,6 +1,7 @@
 package xie.stanley.restapiboot.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import xie.stanley.restapiboot.dto.UserDto;
 import xie.stanley.restapiboot.exception.UserNotFoundException;
@@ -25,6 +26,10 @@ public class TheUserService implements UserService {
     @Override
     public void addUser(UserDto dto) {
         User user = userMapper.toModel(dto);
+
+        //        User user = new User();
+//        BeanUtils.copyProperties(dto, user);
+
         userRepository.save(user);
     }
 

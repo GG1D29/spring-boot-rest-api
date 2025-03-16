@@ -2,12 +2,15 @@ package xie.stanley.restapiboot.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import xie.stanley.restapiboot.dto.UserDto;
 import xie.stanley.restapiboot.exception.UserNotFoundException;
 import xie.stanley.restapiboot.mapper.UserMapper;
+import xie.stanley.restapiboot.model.Employee;
 import xie.stanley.restapiboot.model.User;
 import xie.stanley.restapiboot.model.UserType;
 import xie.stanley.restapiboot.repository.UserRepository;
@@ -31,6 +34,9 @@ class UserServiceTest {
     @Mock
     private UserMapper userMapper;
 
+    @Captor
+    private ArgumentCaptor<User> userArgumentCaptor;
+
     @Test
     void should_FindAllUser_Successfully() {
         List<User> users = new ArrayList<>();
@@ -46,11 +52,17 @@ class UserServiceTest {
     @Test
     void should_AddUser_Successfully() {
         User user = new User();
+        user.setAddress("jalan jalan");
+        user.setName("naamaku");
+
         when(userMapper.toModel(any(UserDto.class))).thenReturn(user);
 
         service.addUser(new UserDto());
 
-        verify(userRepository).save(user);
+        verify(userRepository).save(userArgumentCaptor.capture());
+        User capturedUser = userArgumentCaptor.getValue();
+        assertThat(capturedUser.getAddress()).isEqualTo("jalan jalan");
+        assertThat(capturedUser.getName()).isEqualTo("naamaku");
     }
 
     @Test
